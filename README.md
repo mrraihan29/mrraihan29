@@ -4,11 +4,25 @@ ___
 
 
 # 👋 Hey there, I'm Raihan! 🧠
-<img align="right" width="300" src="banner.gif" alt="Your Image">
-I'm a data enthusiast embarking on a journey into the fascinating world of machine learning! 🤖 Fueled by a passion for uncovering hidden patterns and insights within data, I'm dedicated to transforming raw information into meaningful knowledge. 
+<img align="right" width="350" src="banner.gif" alt="Your Image">
+I'm a data enthusiast embarking on a journey into the fascinating world of machine learning! 🤖 Fueled by a passion for uncovering hidden patterns and insights within data, I'm dedicated to transforming raw information into meaningful knowledge. <br>
 
+<br>
+Currently, I'm sharpening my skills in <b>Python</b> 🐍, diving deep into algorithms, and exploring the vast capabilities of machine learning. My goal is to become a **Machine Learning Engineer** and develop impactful solutions to real-world challenges.
+<br><br><br><br>
 
-Currently, I'm sharpening my skills in **Python** 🐍, diving deep into algorithms, and exploring the vast capabilities of machine learning. My goal is to become a **Machine Learning Engineer** and develop impactful solutions to real-world challenges.
+## 💡 What Excites Me About Data
+
+- **Problem-solving:** Using data-driven approaches to tackle complex challenges is incredibly rewarding.
+- **Continuous Learning:**  The field of machine learning is constantly evolving, providing endless opportunities to grow and explore.
+- **Impactful Applications:** Applying ML to real-world problems has the potential to make a positive difference.
+
+## 🌱 Currently Learning & Exploring
+
+- **Deep Learning Architectures:** Delving deeper into convolutional neural networks (CNNs) and recurrent neural networks (RNNs).
+- **Natural Language Processing (NLP):**  Expanding my knowledge of language models and text processing techniques. 
+- **Cloud Computing for ML:**  Exploring the power of cloud platforms like AWS and GCP for machine learning workflows.
+<br><br>
 
 ## 🌐 Socials:
 [![Discord](https://img.shields.io/badge/Discord-%237289DA.svg?logo=discord&logoColor=white)](https://discord.gg/Migurdian#8961) [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/mrraihan29) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mrraihan/) 
