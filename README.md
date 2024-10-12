@@ -1,6 +1,12 @@
-# 👋 Hey there, I'm Raihan! 🧠
+<img align="center" src="banner.png" alt="Your Image">
 
+___
+
+
+# 👋 Hey there, I'm Raihan! 🧠
+<img align="right" width="300" src="banner.gif" alt="Your Image">
 I'm a data enthusiast embarking on a journey into the fascinating world of machine learning! 🤖 Fueled by a passion for uncovering hidden patterns and insights within data, I'm dedicated to transforming raw information into meaningful knowledge. 
+
 
 Currently, I'm sharpening my skills in **Python** 🐍, diving deep into algorithms, and exploring the vast capabilities of machine learning. My goal is to become a **Machine Learning Engineer** and develop impactful solutions to real-world challenges.
 
