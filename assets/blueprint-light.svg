@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="350" viewBox="0 0 900 350" role="img" aria-label="Engineering Blueprint - NAOBI &amp; Applied ML">
+  <title>Engineering Blueprint - NAOBI &amp; Applied ML</title>
+  <style>
+    .sans { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .pulse { animation: pulse 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .spin { animation: spin 24s linear infinite; transform-box: fill-box; transform-origin: center; }
+    .sweep { animation: sweep 5.5s ease-in-out infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.35); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes sweep {
+      0% { stroke-dashoffset: 320; }
+      50% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -320; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pulse, .spin, .sweep { animation: none; }
+    }
+  </style>
+  <defs>
+    <pattern id="bp-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#E7E2D6" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="oxide-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#914A3B"/>
+      <stop offset="100%" stop-color="#9C794B"/>
+    </linearGradient>
+    <linearGradient id="curve-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#914A3B" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#914A3B" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="350" rx="16" fill="#F3F0E8" stroke="#D8D2C5" stroke-width="1.2"/>
+  <text x="32" y="36" class="mono" font-size="11" fill="#7A7368" letter-spacing="1.6">SPEC 01 // ACTIVE ARCHITECTURE &amp; RESEARCH PILLARS</text>
+  <rect x="28" y="54" width="412" height="270" rx="12" fill="#FAF8F3" stroke="#D8D2C5"/>
+  <text x="48" y="82" class="mono" font-size="11" fill="#914A3B">01 // NAOBI &amp; AGENTIC TOOLING</text>
+  <text x="48" y="106" class="sans" font-size="19" font-weight="700" fill="#171714">Spec-Driven AI Systems</text>
+  <line x1="98" y1="146" x2="218" y2="146" stroke="#D8D2C5" stroke-width="1.5"/>
+  <line x1="252" y1="146" x2="366" y2="146" stroke="#D8D2C5" stroke-width="1.5"/>
+  <path d="M 98 146 L 366 146" fill="none" stroke="url(#oxide-grad)" stroke-width="1.6" stroke-dasharray="140 140" class="sweep"/>
+  <rect x="48" y="128" width="96" height="36" rx="8" fill="#EFEAE0" stroke="#914A3B"/>
+  <text x="96" y="150" text-anchor="middle" class="mono" font-size="11" fill="#171714">naobi.dev</text>
+  <rect x="186" y="128" width="102" height="36" rx="8" fill="#EFEAE0" stroke="#9C794B"/>
+  <text x="237" y="150" text-anchor="middle" class="mono" font-size="11" fill="#171714">naobi-sdlc</text>
+  <rect x="326" y="128" width="96" height="36" rx="8" fill="#EFEAE0" stroke="#3E6B89"/>
+  <text x="374" y="150" text-anchor="middle" class="mono" font-size="11" fill="#171714">personal_os</text>
+  <circle cx="56" cy="198" r="3.5" fill="#914A3B"/>
+  <text x="70" y="202" class="mono" font-size="12" font-weight="600" fill="#171714">naobi.dev</text>
+  <text x="172" y="202" class="sans" font-size="12.5" fill="#4B4740">Engineering studio &amp; digital garden</text>
+  <circle cx="56" cy="234" r="3.5" fill="#9C794B"/>
+  <text x="70" y="238" class="mono" font-size="12" font-weight="600" fill="#171714">naobi-sdlc</text>
+  <text x="172" y="238" class="sans" font-size="12.5" fill="#4B4740">Phase-gated SDLC plugin for agents</text>
+  <circle cx="56" cy="270" r="3.5" fill="#3E6B89"/>
+  <text x="70" y="274" class="mono" font-size="12" font-weight="600" fill="#171714">personal_os</text>
+  <text x="172" y="274" class="sans" font-size="12.5" fill="#4B4740">TypeScript personal workspace engine</text>
+  <text x="48" y="306" class="mono" font-size="10.5" fill="#7A7368">STACK: TypeScript · Python · Rust · MCP</text>
+  <rect x="460" y="54" width="412" height="270" rx="12" fill="#FAF8F3" stroke="#D8D2C5"/>
+  <text x="480" y="82" class="mono" font-size="11" fill="#914A3B">02 // AI, ML &amp; RELIABILITY</text>
+  <text x="480" y="106" class="sans" font-size="19" font-weight="700" fill="#171714">Probabilistic &amp; Sensor ML</text>
+  <rect x="480" y="122" width="372" height="56" rx="8" fill="#EFEAE0" stroke="#D8D2C5"/>
+  <path d="M 494 134 C 570 135, 620 144, 675 156 C 730 166, 780 170, 838 171 L 838 176 L 494 176 Z" fill="url(#curve-fill)"/>
+  <path d="M 494 134 C 570 135, 620 144, 675 156 C 730 166, 780 170, 838 171" fill="none" stroke="#914A3B" stroke-width="2"/>
+  <circle cx="675" cy="156" r="4" fill="#9C794B" class="pulse"/>
+  <text x="762" y="140" class="mono" font-size="10" fill="#7A7368">P(RUL | y)</text>
+  <circle cx="488" cy="198" r="3.5" fill="#914A3B"/>
+  <text x="502" y="202" class="mono" font-size="12" font-weight="600" fill="#171714">Bayesian_RUL</text>
+  <text x="626" y="202" class="sans" font-size="12.5" fill="#4B4740">RP-001 reliability &amp; survival evidence</text>
+  <circle cx="488" cy="234" r="3.5" fill="#4B7447"/>
+  <text x="502" y="238" class="mono" font-size="12" font-weight="600" fill="#171714">OilFilterMonitor</text>
+  <text x="626" y="238" class="sans" font-size="12.5" fill="#4B4740">Predictive sensor diagnostics (ML)</text>
+  <circle cx="488" cy="270" r="3.5" fill="#9C794B"/>
+  <text x="502" y="274" class="mono" font-size="12" font-weight="600" fill="#171714">Quant &amp; NN_Core</text>
+  <text x="626" y="274" class="sans" font-size="12.5" fill="#4B4740">Portfolio math &amp; neural nets from scratch</text>
+  <text x="480" y="306" class="mono" font-size="10.5" fill="#7A7368">STACK: PyTorch · SciPy · Scikit-Learn · Jupyter</text>
+</svg>
