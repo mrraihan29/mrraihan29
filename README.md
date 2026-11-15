@@ -1,65 +1,40 @@
-# 👋 Hey there, I'm Muhammad Rizky Raihan!
+<img align="center" src="banner.png" alt="Your Image">
 
-I'm an **Industrial Engineer** (Best Graduate, GPA **3.80/4.00**), **Project Estimator**, and **Data Scientist / AI Builder** turning engineering, operational, and cost data into decision-ready insights and production software.
+___
 
-Currently, I work as a **Project Estimator** at **PT Resindo Energi Sumberdaya** delivering CAPEX estimates for mining, mineral processing, and infrastructure projects (up to **USD 150M**), run **NAOBI** ([naobi.dev](https://naobi.dev)) to build AI-driven engineering and ERP systems, and serve part-time as **Lead Data Scientist** on a government-funded predictive maintenance research project.
 
----
+# 👋 Hey there, I'm Raihan! 🧠
+<img align="right" width="350" src="banner.gif" alt="Your Image">
+I'm a data enthusiast embarking on a journey into the fascinating world of machine learning! 🤖 Fueled by a passion for uncovering hidden patterns and insights within data, I'm dedicated to transforming raw information into meaningful knowledge. <br>
 
-## 💡 What I Build & Work On
+<br>
+Currently, I'm sharpening my skills in <b>Python</b> 🐍, diving deep into algorithms, and exploring the vast capabilities of machine learning. My goal is to become a **Machine Learning Engineer** and develop impactful solutions to real-world challenges.
+<br><br><br><br>
 
-- **CAPEX Cost Estimation & Risk Modeling:** Building multi-discipline AACE Class 4 → Class 2 Excel cost models, running **200,000-iteration Monte Carlo** cost risk simulations, and automating MTO pricing and workbook audits through AI agent orchestration (cutting turnaround by up to 1 week per study).
-- **AI Products & Custom Operational Systems ([NAOBI](https://naobi.dev)):** Developing an AI-assisted cost estimation information system and end-to-end client ERP ecosystems (supply chain, inventory control, transfer pricing, role-based Django/PostgreSQL workflows with 190+ automated tests) on self-hosted Docker/Coolify infrastructure.
-- **Applied ML & Predictive Maintenance:** Leading the data science stream for national research (**PRPB 2024**) predicting diesel fuel filter clogging across a **129-truck fleet** (5,600+ service records, Random Forest **MAE 6.5 days**) deployed as a containerized **FastAPI** service.
-- **AI Agent Orchestration & Data Architecture:** Designing bronze–silver–gold data pipelines (Apache Iceberg, object storage) and multi-agent engineering workflows using Claude Code, Codex, and custom agent harnesses.
+## 💡 What Excites Me About Data
 
----
+- **Problem-solving:** Using data-driven approaches to tackle complex challenges is incredibly rewarding.
+- **Continuous Learning:**  The field of machine learning is constantly evolving, providing endless opportunities to grow and explore.
+- **Impactful Applications:** Applying ML to real-world problems has the potential to make a positive difference.
 
-## 🎓 Education & Credentials
+## 🌱 Currently Learning & Exploring
 
-- **B.Eng. (S.T.) in Industrial Engineering** — Universitas Muhammadiyah Surakarta (`GPA 3.80/4.00`, Best Graduate, Faculty of Engineering)
-- **Bangkit Academy 2024 — Machine Learning Path (Graduate with Distinction)** — Google, Tokopedia, Gojek & Traveloka (led a 7-person team building *BaliSnap* with 89% accuracy)
-- **Certifications:** Google Data Analytics · Machine Learning Specialization (Stanford & DeepLearning.AI) · TensorFlow Developer Specialization (DeepLearning.AI)
+- **Deep Learning Architectures:** Delving deeper into convolutional neural networks (CNNs) and recurrent neural networks (RNNs).
+- **Natural Language Processing (NLP):**  Expanding my knowledge of language models and text processing techniques. 
+- **Cloud Computing for ML:**  Exploring the power of cloud platforms like AWS and GCP for machine learning workflows.
+<br><br>
 
----
+## 🌐 Socials:
+[![Discord](https://img.shields.io/badge/Discord-%237289DA.svg?logo=discord&logoColor=white)](https://discord.gg/Migurdian#8961) [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/mrraihan29) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mrraihan/) 
 
-## 🌐 Socials
+# 💻 Tech Stack:
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white) ![Anaconda](https://img.shields.io/badge/Anaconda-%2344A833.svg?style=for-the-badge&logo=anaconda&logoColor=white) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white) ![Adobe](https://img.shields.io/badge/adobe-%23FF0000.svg?style=for-the-badge&logo=adobe&logoColor=white) ![Keras](https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=Keras&logoColor=white) ![Matplotlib](https://img.shields.io/badge/Matplotlib-%23ffffff.svg?style=for-the-badge&logo=Matplotlib&logoColor=black) ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white) ![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white) ![Plotly](https://img.shields.io/badge/Plotly-%233F4F75.svg?style=for-the-badge&logo=plotly&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white) ![Scipy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+# 📊 GitHub Stats:
+![](https://github-readme-stats.vercel.app/api?username=mrraihan29&theme=synthwave&hide_border=false&include_all_commits=true&count_private=true)<br/>
+![](https://github-readme-streak-stats.herokuapp.com/?user=mrraihan29&theme=synthwave&hide_border=false)<br/>
+![](https://github-readme-stats.vercel.app/api/top-langs/?username=mrraihan29&theme=synthwave&hide_border=false&include_all_commits=true&count_private=true&layout=compact)
 
-[![Website](https://img.shields.io/badge/naobi.dev-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://naobi.dev)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mrraihan/)
-[![Email](https://img.shields.io/badge/Email-mrraihan2002@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:mrraihan2002@gmail.com)
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](https://instagram.com/mrraihan29)
+### ✍️ Random Dev Quote
+![](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight)
 
----
-
-## 💻 Tech Stack
-
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![Power BI](https://img.shields.io/badge/power_bi-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
-![Tableau](https://img.shields.io/badge/Tableau-E97627?style=for-the-badge&logo=Tableau&logoColor=white)
-![Microsoft Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
-![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
-
----
-
-## 📊 GitHub Metrics
-
-<p align="center">
-  <img src="github-metrics.svg" alt="GitHub Metrics" />
-</p>
-
-<p align="center">
-  <img src="metrics.languages.svg" alt="Languages and Activity Metrics" />
-</p>
+<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
