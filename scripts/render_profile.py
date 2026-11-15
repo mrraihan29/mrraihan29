@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Render dark and light SVG profile panels for mrraihan29 from live GitHub data."""
+"""Render dark and light NAOBI-aligned SVG folio panels for mrraihan29."""
 
 from __future__ import annotations
 
 import json
+import math
 import os
 import urllib.error
 import urllib.request
@@ -15,55 +16,54 @@ from pathlib import Path
 USERNAME = "mrraihan29"
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS_DIR = ROOT / "assets"
+KYU_PATH = Path(__file__).resolve().parent / "kyu_fragment.xml"
 WIB = timezone(timedelta(hours=7))
 
 THEMES = {
     "dark": {
         "canvas": "#16130F",
-        "card": "#1F1B16",
-        "card_alt": "#26211B",
+        "raised": "#1F1B16",
         "ink": "#F1EEE6",
         "ink_sec": "#C9C2B5",
         "ink_muted": "#9A9083",
-        "line": "#3A342C",
-        "grid": "#24201A",
+        "rule": "#3A342C",
+        "grid": "#2C2721",
         "oxide": "#E0675B",
         "earth": "#E3BDA9",
-        "ochre": "#D4A96A",
-        "sage": "#8FB58A",
+        "ochre": "#C9A464",
+        "sage": "#9FAA86",
         "steel": "#8AB0C9",
-        "glow": "rgba(224,103,91,0.16)",
     },
     "light": {
         "canvas": "#F3F0E8",
-        "card": "#FAF8F3",
-        "card_alt": "#EFEAE0",
+        "raised": "#F9F7F1",
         "ink": "#171714",
-        "ink_sec": "#4B4740",
-        "ink_muted": "#7A7368",
-        "line": "#D8D2C5",
-        "grid": "#E7E2D6",
+        "ink_sec": "#393732",
+        "ink_muted": "#6D6A63",
+        "rule": "#D9D3C7",
+        "grid": "#DED7C9",
         "oxide": "#914A3B",
-        "earth": "#684737",
+        "earth": "#6E3B2C",
         "ochre": "#9C794B",
-        "sage": "#4B7447",
-        "steel": "#3E6B89",
-        "glow": "rgba(145,74,59,0.12)",
+        "sage": "#5D7253",
+        "steel": "#4A6B82",
     },
 }
 
 LANG_PALETTE = {
-    "Python": "steel",
-    "TypeScript": "ochre",
-    "Jupyter Notebook": "oxide",
-    "CSS": "earth",
-    "Svelte": "sage",
+    "Python": "earth",
+    "TypeScript": "steel",
+    "Jupyter Notebook": "ochre",
+    "CSS": "sage",
+    "Svelte": "oxide",
     "Rust": "oxide",
-    "HTML": "earth",
+    "HTML": "ochre",
 }
 
+FONT_SERIF = "'Newsreader', 'Spectral', Georgia, 'Times New Roman', serif"
 FONT_SANS = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
 FONT_MONO = "'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace"
+FONT_KANJI = "'Naobi Mincho', 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', Georgia, serif"
 
 
 def fetch_json(url: str) -> object | None:
@@ -85,7 +85,7 @@ def fetch_json(url: str) -> object | None:
 def collect_github_metrics() -> dict:
     user = fetch_json(f"https://api.github.com/users/{USERNAME}") or {}
     repos = fetch_json(f"https://api.github.com/users/{USERNAME}/repos?per_page=100&sort=pushed") or []
-    events = fetch_json(f"https://api.github.com/users/{USERNAME}/events/public?per_page=15") or []
+    events = fetch_json(f"https://api.github.com/users/{USERNAME}/events/public?per_page=20") or []
 
     non_fork_repos = [r for r in repos if isinstance(r, dict) and not r.get("fork")]
     total_stars = sum(int(r.get("stargazers_count", 0)) for r in non_fork_repos)
@@ -133,164 +133,186 @@ def collect_github_metrics() -> dict:
     }
 
 
-def svg_header(width: int, height: int, title: str, t: dict[str, str]) -> str:
+def smoothstep(a: float, b: float, x: float) -> float:
+    x = min(1.0, max(0.0, (x - a) / (b - a)))
+    return x * x * (3.0 - 2.0 * x)
+
+
+def generate_brush_ribbons(variant: str, x0: float, y0: float, width: float) -> str:
+    """Port of naobi.dev BrushAccent.astro dry-ink ribbon stroke geometry."""
+    closing = variant == "closing"
+    amp = 15.0 if closing else 3.2
+    half0 = 26.0 if closing else 4.2
+    count = 12 if closing else 8
+    seed = 1457 if closing else 2789
+
+    def rand() -> float:
+        nonlocal seed
+        seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF
+        return seed / 4294967296.0
+
+    def point(k: float) -> tuple[float, float, float, float]:
+        phase = k * 2.6 + 0.4
+        slope = amp * 2.6 * math.cos(phase) / width
+        length = math.hypot(1.0, slope)
+        return (x0 + k * width, y0 + amp * math.sin(phase), -slope / length, 1.0 / length)
+
+    paths = []
+    steps = 120
+    for r in range(count):
+        offset = -1.0 + (2.0 * r + 1.0) / count
+        hw = (1.0 / count) * (0.85 + rand() * 0.5)
+        end = 1.0 - 0.26 * rand() * (0.4 + 0.6 * abs(offset))
+        pts_a: list[str] = []
+        pts_b: list[str] = []
+        for i in range(steps + 1):
+            k = (i / steps) * end
+            px, py, nx, ny = point(k)
+            sh = 1.0 - 0.65 * smoothstep(0.35 if closing else 0.4, 1.0, k) * 0.95
+            tail = max(0.0, (k - 0.72) / 0.28)
+            w = half0 * (0.3 + 0.7 * smoothstep(0.0, 0.05, k)) * (1.0 - 0.85 * (tail ** 1.2))
+            a = w * (offset + hw * sh)
+            b = w * (offset - hw * sh)
+            pts_a.append(f"{px + nx * a:.1f} {py + ny * a:.1f}")
+            pts_b.append(f"{px + nx * b:.1f} {py + ny * b:.1f}")
+        d = "M" + "L".join(pts_a) + "L" + "L".join(reversed(pts_b)) + "Z"
+        op = 0.50 + rand() * 0.42
+        paths.append(f'<path d="{d}" fill-opacity="{op:.2f}"/>')
+    return "\n    ".join(paths)
+
+
+def render_hanko_seal(x: float, y: float, t: dict[str, str], scale: float = 1.0) -> str:
+    return f"""  <g transform="translate({x}, {y}) rotate(-3) scale({scale})">
+    <rect x="0" y="0" width="24" height="44" rx="2" fill="{t['oxide']}"/>
+    <text x="12" y="19" text-anchor="middle" class="kanji" font-size="14" fill="{t['canvas']}">直</text>
+    <text x="12" y="36" text-anchor="middle" class="kanji" font-size="14" fill="{t['canvas']}">毘</text>
+  </g>"""
+
+
+def svg_open(width: int, height: int, title: str, t: dict[str, str]) -> str:
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="{escape(title)}">
   <title>{escape(title)}</title>
   <style>
+    .serif {{ font-family: {FONT_SERIF}; }}
     .sans {{ font-family: {FONT_SANS}; }}
     .mono {{ font-family: {FONT_MONO}; }}
-    .pulse {{ animation: pulse 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }}
-    .spin {{ animation: spin 24s linear infinite; transform-box: fill-box; transform-origin: center; }}
-    .sweep {{ animation: sweep 5.5s ease-in-out infinite; }}
-    @keyframes pulse {{
-      0%, 100% {{ opacity: 1; transform: scale(1); }}
-      50% {{ opacity: 0.45; transform: scale(1.35); }}
-    }}
-    @keyframes spin {{
-      from {{ transform: rotate(0deg); }}
-      to {{ transform: rotate(360deg); }}
-    }}
-    @keyframes sweep {{
-      0% {{ stroke-dashoffset: 320; }}
-      50% {{ stroke-dashoffset: 0; }}
-      100% {{ stroke-dashoffset: -320; }}
+    .kanji {{ font-family: {FONT_KANJI}; }}
+    .ink-breathe {{ animation: inkBreathe 6s ease-in-out infinite; }}
+    @keyframes inkBreathe {{
+      0%, 100% {{ opacity: 0.94; }}
+      50% {{ opacity: 0.78; }}
     }}
     @media (prefers-reduced-motion: reduce) {{
-      .pulse, .spin, .sweep {{ animation: none; }}
+      .ink-breathe {{ animation: none; opacity: 0.92; }}
     }}
-  </style>
-  <defs>
-    <pattern id="bp-grid" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="{t['grid']}" stroke-width="1"/>
-    </pattern>
-    <linearGradient id="oxide-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="{t['oxide']}"/>
-      <stop offset="100%" stop-color="{t['ochre']}"/>
-    </linearGradient>
-    <linearGradient id="curve-fill" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="{t['oxide']}" stop-opacity="0.28"/>
-      <stop offset="100%" stop-color="{t['oxide']}" stop-opacity="0.0"/>
-    </linearGradient>
-  </defs>"""
+  </style>"""
 
 
-def render_hero(t: dict[str, str], m: dict) -> str:
-    w, h = 900, 260
+def render_hero(t: dict[str, str]) -> str:
+    w, h = 900, 300
+    kyu_markup = KYU_PATH.read_text(encoding="utf-8") if KYU_PATH.exists() else ""
     parts = [
-        svg_header(w, h, "Raihan (mrraihan29) - NAOBI Engineering Blueprint", t),
-        f'  <rect width="{w}" height="{h}" rx="16" fill="{t["canvas"]}" stroke="{t["line"]}" stroke-width="1.2"/>',
-        f'  <rect x="1" y="1" width="{w-2}" height="{h-2}" rx="15" fill="url(#bp-grid)"/>',
-        # Corner registration ticks
-        f'  <path d="M 20 34 L 20 20 L 34 20 M {w-34} 20 L {w-20} 20 L {w-20} 34 M 20 {h-34} L 20 {h-20} L 34 {h-20} M {w-34} {h-20} L {w-20} {h-20} L {w-20} {h-34}" fill="none" stroke="{t["oxide"]}" stroke-width="1.5" opacity="0.75"/>',
-        # Top status strip
-        f'  <text x="42" y="46" class="mono" font-size="11" fill="{t["ink_muted"]}" letter-spacing="1.6">SPEC 00 // ENGINEERING TELEMETRY</text>',
-        f'  <rect x="650" y="29" width="208" height="24" rx="12" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <circle cx="667" cy="41" r="4" fill="{t["oxide"]}" class="pulse"/>',
-        f'  <text x="680" y="45" class="mono" font-size="10.5" fill="{t["ink_sec"]}">BUILDING AT NAOBI · UTC+7</text>',
-        # Identity headline
-        f'  <text x="42" y="102" class="sans" font-size="38" font-weight="700" fill="{t["ink"]}" letter-spacing="-0.8">Raihan</text>',
-        f'  <text x="192" y="102" class="mono" font-size="16" font-weight="500" fill="{t["oxide"]}">@mrraihan29</text>',
-        f'  <text x="42" y="132" class="sans" font-size="15.5" font-weight="600" fill="{t["ink_sec"]}">Systems &amp; Applied ML Engineer</text>',
-        f'  <text x="42" y="154" class="sans" font-size="14" fill="{t["ink_muted"]}">Crafting agentic tooling, probabilistic models &amp; resilient web software.</text>',
-        # Accent divider + waveform
-        f'  <line x1="42" y1="174" x2="640" y2="174" stroke="{t["line"]}" stroke-width="1"/>',
-        f'  <path d="M 42 174 L 190 174 L 204 162 L 216 184 L 228 168 L 238 174 L 640 174" fill="none" stroke="url(#oxide-grad)" stroke-width="1.8" stroke-dasharray="160 160" class="sweep"/>',
-        # Pill metadata row
-        f'  <rect x="42" y="194" width="134" height="30" rx="8" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="56" y="213" class="mono" font-size="11.5" fill="{t["earth"]}">web // naobi.dev</text>',
-        f'  <rect x="186" y="194" width="172" height="30" rx="8" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="200" y="213" class="mono" font-size="11.5" fill="{t["ink_sec"]}">focus // Agentic SDLC</text>',
-        f'  <rect x="368" y="194" width="154" height="30" rx="8" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="382" y="213" class="mono" font-size="11.5" fill="{t["ink_sec"]}">ml // Bayesian RUL</text>',
-        # Right-side orbital telemetry radar
-        f'  <g transform="translate(762, 146)">',
-        f'    <circle r="68" fill="{t["card"]}" stroke="{t["line"]}" stroke-width="1.2"/>',
-        f'    <circle r="48" fill="none" stroke="{t["line"]}" stroke-dasharray="3 4" stroke-width="1"/>',
-        f'    <circle r="28" fill="none" stroke="{t["oxide"]}" stroke-opacity="0.4" stroke-width="1"/>',
-        f'    <line x1="-68" y1="0" x2="68" y2="0" stroke="{t["line"]}" stroke-width="1"/>',
-        f'    <line x1="0" y1="-68" x2="0" y2="68" stroke="{t["line"]}" stroke-width="1"/>',
-        f'    <g class="spin">',
-        f'      <line x1="0" y1="0" x2="46" y2="-46" stroke="{t["oxide"]}" stroke-width="1.8"/>',
-        f'      <circle cx="46" cy="-46" r="3.5" fill="{t["oxide"]}"/>',
-        f'      <circle cx="-32" cy="24" r="2.5" fill="{t["ochre"]}"/>',
-        f'    </g>',
-        f'    <circle r="5.5" fill="{t["canvas"]}" stroke="{t["oxide"]}" stroke-width="2"/>',
-        f'    <text x="0" y="88" text-anchor="middle" class="mono" font-size="10" fill="{t["ink_muted"]}">{m["public_repos"]} REPOS · {m["total_stars"]} STARS</text>',
+        svg_open(w, h, "Raihan (@mrraihan29) — Careful AI and systems for engineers at NAOBI", t),
+        f'  <rect width="{w}" height="{h}" rx="4" fill="{t["canvas"]}" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Left editorial column
+        f'  <text x="48" y="48" class="mono" font-size="11.5" fill="{t["earth"]}">naobi.dev</text>',
+        f'  <text x="48" y="108" class="serif" font-size="50" font-weight="500" fill="{t["ink"]}" letter-spacing="-0.8">Raihan</text>',
+        f'  <text x="218" y="108" class="mono" font-size="15" fill="{t["ink_muted"]}">@mrraihan29</text>',
+        f'  <text x="48" y="148" class="serif" font-size="22" font-weight="400" fill="{t["ink"]}">Careful AI and resilient systems for engineers.</text>',
+        f'  <text x="48" y="180" class="sans" font-size="14.5" fill="{t["ink_sec"]}">Research, agentic workflows, and cost estimating at NAOBI.</text>',
+        f'  <text x="48" y="202" class="sans" font-size="14.5" fill="{t["ink_sec"]}">AI helps organise technical evidence; calculations stay inspectable.</text>',
+        # Hairline footer strip on left
+        f'  <line x1="48" y1="234" x2="528" y2="234" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="48" y="258" class="sans" font-size="13" font-weight="500" fill="{t["earth"]}">Engineer at NAOBI</text>',
+        f'  <line x1="176" y1="246" x2="176" y2="262" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="192" y="258" class="sans" font-size="13" fill="{t["ink_muted"]}">Jakarta (UTC+7)</text>',
+        f'  <line x1="308" y1="246" x2="308" y2="262" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="324" y="258" class="sans" font-size="12.5" fill="{t["ink_muted"]}">Research, systems &amp; ML</text>',
+        # Right calligraphy field (mirroring naobi.dev KanjiField)
+        f'  <line x1="576" y1="36" x2="852" y2="36" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="576" y="54" class="mono" font-size="11" fill="{t["ink_muted"]}">直毘 / Open inquiry</text>',
+        f'  <g transform="translate(616, 62) scale(1.56)" color="{t["ink"]}" class="ink-breathe">',
+        f'    {kyu_markup}',
         f'  </g>',
+        render_hanko_seal(824, 68, t, scale=0.95),
+        f'  <line x1="576" y1="242" x2="852" y2="242" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="576" y="262" class="sans" font-size="12.5" font-weight="500" fill="{t["ink"]}">究 Research</text>',
+        f'  <text x="654" y="262" class="sans" font-size="12.5" fill="{t["ink_muted"]}">— questions worth understanding.</text>',
         "</svg>",
     ]
     return "\n".join(parts)
 
 
-def render_blueprint(t: dict[str, str]) -> str:
-    w, h = 900, 350
+def render_folio(t: dict[str, str]) -> str:
+    w, h = 900, 380
+    brush = generate_brush_ribbons("divider", 48.0, 74.0, 804.0)
     parts = [
-        svg_header(w, h, "Engineering Blueprint - NAOBI & Applied ML", t),
-        f'  <rect width="{w}" height="{h}" rx="16" fill="{t["canvas"]}" stroke="{t["line"]}" stroke-width="1.2"/>',
-        f'  <text x="32" y="36" class="mono" font-size="11" fill="{t["ink_muted"]}" letter-spacing="1.6">SPEC 01 // ACTIVE ARCHITECTURE &amp; RESEARCH PILLARS</text>',
-        # Left Card: NAOBI & Agentic Tooling
-        f'  <rect x="28" y="54" width="412" height="270" rx="12" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="48" y="82" class="mono" font-size="11" fill="{t["oxide"]}">01 // NAOBI &amp; AGENTIC TOOLING</text>',
-        f'  <text x="48" y="106" class="sans" font-size="19" font-weight="700" fill="{t["ink"]}">Spec-Driven AI Systems</text>',
-        # Schematic node graph
-        f'  <line x1="98" y1="146" x2="218" y2="146" stroke="{t["line"]}" stroke-width="1.5"/>',
-        f'  <line x1="252" y1="146" x2="366" y2="146" stroke="{t["line"]}" stroke-width="1.5"/>',
-        f'  <path d="M 98 146 L 366 146" fill="none" stroke="url(#oxide-grad)" stroke-width="1.6" stroke-dasharray="140 140" class="sweep"/>',
-        f'  <rect x="48" y="128" width="96" height="36" rx="8" fill="{t["card_alt"]}" stroke="{t["oxide"]}"/>',
-        f'  <text x="96" y="150" text-anchor="middle" class="mono" font-size="11" fill="{t["ink"]}">naobi.dev</text>',
-        f'  <rect x="186" y="128" width="102" height="36" rx="8" fill="{t["card_alt"]}" stroke="{t["ochre"]}"/>',
-        f'  <text x="237" y="150" text-anchor="middle" class="mono" font-size="11" fill="{t["ink"]}">naobi-sdlc</text>',
-        f'  <rect x="326" y="128" width="96" height="36" rx="8" fill="{t["card_alt"]}" stroke="{t["steel"]}"/>',
-        f'  <text x="374" y="150" text-anchor="middle" class="mono" font-size="11" fill="{t["ink"]}">personal_os</text>',
-        # Rows
-        f'  <circle cx="56" cy="198" r="3.5" fill="{t["oxide"]}"/>',
-        f'  <text x="70" y="202" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">naobi.dev</text>',
-        f'  <text x="172" y="202" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Engineering studio &amp; digital garden</text>',
-        f'  <circle cx="56" cy="234" r="3.5" fill="{t["ochre"]}"/>',
-        f'  <text x="70" y="238" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">naobi-sdlc</text>',
-        f'  <text x="172" y="238" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Phase-gated SDLC plugin for agents</text>',
-        f'  <circle cx="56" cy="270" r="3.5" fill="{t["steel"]}"/>',
-        f'  <text x="70" y="274" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">personal_os</text>',
-        f'  <text x="172" y="274" class="sans" font-size="12.5" fill="{t["ink_sec"]}">TypeScript personal workspace engine</text>',
-        f'  <text x="48" y="306" class="mono" font-size="10.5" fill="{t["ink_muted"]}">STACK: TypeScript · Python · Rust · MCP</text>',
-        # Right Card: AI, ML & Reliability Engineering
-        f'  <rect x="460" y="54" width="412" height="270" rx="12" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="480" y="82" class="mono" font-size="11" fill="{t["oxide"]}">02 // AI, ML &amp; RELIABILITY</text>',
-        f'  <text x="480" y="106" class="sans" font-size="19" font-weight="700" fill="{t["ink"]}">Probabilistic &amp; Sensor ML</text>',
-        # Reliability curve plot
-        f'  <rect x="480" y="122" width="372" height="56" rx="8" fill="{t["card_alt"]}" stroke="{t["line"]}"/>',
-        f'  <path d="M 494 134 C 570 135, 620 144, 675 156 C 730 166, 780 170, 838 171 L 838 176 L 494 176 Z" fill="url(#curve-fill)"/>',
-        f'  <path d="M 494 134 C 570 135, 620 144, 675 156 C 730 166, 780 170, 838 171" fill="none" stroke="{t["oxide"]}" stroke-width="2"/>',
-        f'  <circle cx="675" cy="156" r="4" fill="{t["ochre"]}" class="pulse"/>',
-        f'  <text x="762" y="140" class="mono" font-size="10" fill="{t["ink_muted"]}">P(RUL | y)</text>',
-        # Rows
-        f'  <circle cx="488" cy="198" r="3.5" fill="{t["oxide"]}"/>',
-        f'  <text x="502" y="202" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">Bayesian_RUL</text>',
-        f'  <text x="626" y="202" class="sans" font-size="12.5" fill="{t["ink_sec"]}">RP-001 reliability &amp; survival evidence</text>',
-        f'  <circle cx="488" cy="234" r="3.5" fill="{t["sage"]}"/>',
-        f'  <text x="502" y="238" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">OilFilterMonitor</text>',
-        f'  <text x="626" y="238" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Predictive sensor diagnostics (ML)</text>',
-        f'  <circle cx="488" cy="270" r="3.5" fill="{t["ochre"]}"/>',
-        f'  <text x="502" y="274" class="mono" font-size="12" font-weight="600" fill="{t["ink"]}">Quant &amp; NN_Core</text>',
-        f'  <text x="626" y="274" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Portfolio math &amp; neural nets from scratch</text>',
-        f'  <text x="480" y="306" class="mono" font-size="10.5" fill="{t["ink_muted"]}">STACK: PyTorch · SciPy · Scikit-Learn · Jupyter</text>',
+        svg_open(w, h, "Selected work and active engineering research", t),
+        f'  <rect width="{w}" height="{h}" rx="4" fill="{t["canvas"]}" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Section heading
+        f'  <text x="48" y="52" class="serif" font-size="26" font-weight="500" fill="{t["ink"]}" letter-spacing="-0.4">Selected work</text>',
+        f'  <text x="852" y="52" text-anchor="end" class="sans" font-size="13" fill="{t["ink_muted"]}">First product, agentic tooling, and reliability research</text>',
+        # Organic dry-brush divider (from BrushAccent.astro)
+        f'  <g fill="{t["ink"]}" opacity="0.72">',
+        f'    {brush}',
+        f'  </g>',
+        # Vertical hairline separating the two editorial columns (no nested boxes)
+        f'  <line x1="450" y1="104" x2="450" y2="342" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Left column: NAOBI & engineering systems
+        f'  <text x="48" y="122" class="serif" font-size="19" font-weight="500" fill="{t["ink"]}">NAOBI &amp; engineering systems</text>',
+        f'  <line x1="48" y1="136" x2="418" y2="136" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="48" y="164" class="sans" font-size="14" font-weight="600" fill="{t["earth"]}">AI cost estimating</text>',
+        f'  <text x="418" y="164" text-anchor="end" class="mono" font-size="11" fill="{t["oxide"]}">first product</text>',
+        f'  <text x="48" y="185" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Traceable price evidence, CAPEX options &amp; Excel export.</text>',
+        f'  <text x="48" y="203" class="sans" font-size="12.5" fill="{t["ink_muted"]}">It proposes; the estimator approves.</text>',
+        f'  <line x1="48" y1="220" x2="418" y2="220" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="48" y="246" class="mono" font-size="13.5" font-weight="600" fill="{t["ink"]}">naobi-sdlc</text>',
+        f'  <text x="418" y="246" text-anchor="end" class="mono" font-size="11" fill="{t["ink_muted"]}">Python</text>',
+        f'  <text x="48" y="267" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Phase-gated SDLC workflow plugin keeping agent edits inspectable.</text>',
+        f'  <line x1="48" y1="284" x2="418" y2="284" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="48" y="310" class="mono" font-size="13.5" font-weight="600" fill="{t["ink"]}">personal_os</text>',
+        f'  <text x="418" y="310" text-anchor="end" class="mono" font-size="11" fill="{t["ink_muted"]}">TypeScript</text>',
+        f'  <text x="48" y="331" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Local-first workspace environment and operational tooling.</text>',
+        # Right column: Probabilistic ML & reliability
+        f'  <text x="482" y="122" class="serif" font-size="19" font-weight="500" fill="{t["ink"]}">Probabilistic ML &amp; reliability</text>',
+        f'  <line x1="482" y1="136" x2="852" y2="136" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Exact analytical survival figure (L-axes + gridlines, no rounded card)
+        f'  <g transform="translate(482, 148)">',
+        f'    <line x1="0" y1="16" x2="370" y2="16" stroke="{t["grid"]}" stroke-width="1"/>',
+        f'    <line x1="0" y1="32" x2="370" y2="32" stroke="{t["grid"]}" stroke-width="1"/>',
+        f'    <line x1="123" y1="0" x2="123" y2="48" stroke="{t["grid"]}" stroke-width="1"/>',
+        f'    <line x1="246" y1="0" x2="246" y2="48" stroke="{t["grid"]}" stroke-width="1"/>',
+        f'    <line x1="0" y1="0" x2="0" y2="48" stroke="{t["rule"]}" stroke-width="1.2"/>',
+        f'    <line x1="0" y1="48" x2="370" y2="48" stroke="{t["rule"]}" stroke-width="1.2"/>',
+        f'    <path d="M 0 6 C 78 7, 132 16, 188 28 C 244 39, 300 43, 368 44" fill="none" stroke="{t["earth"]}" stroke-width="1.8"/>',
+        f'    <path d="M 0 11 C 84 13, 138 24, 196 35 C 250 43, 304 45, 368 46" fill="none" stroke="{t["oxide"]}" stroke-width="1.4" stroke-dasharray="4 3"/>',
+        f'    <text x="370" y="11" text-anchor="end" class="mono" font-size="10.5" fill="{t["ink_muted"]}">P(RUL | y), C-MAPSS</text>',
+        f'  </g>',
+        f'  <text x="482" y="220" class="mono" font-size="13" font-weight="600" fill="{t["ink"]}">RP-001_Bayesian_RUL_Reliability</text>',
+        f'  <text x="852" y="220" text-anchor="end" class="mono" font-size="11" fill="{t["ink_muted"]}">Python</text>',
+        f'  <text x="482" y="241" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Interval quality vs. decision quality for remaining useful life.</text>',
+        f'  <line x1="482" y1="258" x2="852" y2="258" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="482" y="284" class="mono" font-size="13" font-weight="600" fill="{t["ink"]}">OilFilterMonitoringSystem</text>',
+        f'  <text x="852" y="284" text-anchor="end" class="mono" font-size="11" fill="{t["ink_muted"]}">Jupyter</text>',
+        f'  <text x="482" y="305" class="sans" font-size="12.5" fill="{t["ink_sec"]}">Predictive maintenance diagnostics from sensor telemetry.</text>',
+        f'  <line x1="482" y1="322" x2="852" y2="322" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="482" y="346" class="mono" font-size="12.5" fill="{t["earth"]}">quant-portfolio-analysis, NN_From_Scratch</text>',
         "</svg>",
     ]
     return "\n".join(parts)
 
 
-def render_telemetry(t: dict[str, str], m: dict) -> str:
-    w, h = 900, 210
+def render_ledger(t: dict[str, str], m: dict) -> str:
+    w, h = 900, 196
     langs = m["top_langs"]
-    bar_x, bar_y, bar_w, bar_h = 42, 92, 340, 12
+    bar_x, bar_y, bar_w, bar_h = 48, 92, 360, 8
 
     bar_segments = []
     legend_items = []
     cur_x = float(bar_x)
     total_pct = sum(item["pct"] for item in langs) or 100
     for idx, item in enumerate(langs):
-        color_key = LANG_PALETTE.get(item["name"], "earth")
-        color = t[color_key]
+        color = t[LANG_PALETTE.get(item["name"], "earth")]
         seg_w = (item["pct"] / total_pct) * bar_w
         if idx == len(langs) - 1:
             seg_w = max(0.0, (bar_x + bar_w) - cur_x)
@@ -301,42 +323,57 @@ def render_telemetry(t: dict[str, str], m: dict) -> str:
 
         col = idx % 2
         row = idx // 2
-        lx = 46 + col * 186
-        ly = 128 + row * 22
+        lx = 48 + col * 188
+        ly = 124 + row * 21
         label = "Jupyter" if item["name"] == "Jupyter Notebook" else item["name"]
         legend_items.append(
-            f'  <circle cx="{lx}" cy="{ly - 4}" r="4" fill="{color}"/>\n'
-            f'  <text x="{lx + 12}" y="{ly}" class="mono" font-size="11.5" fill="{t["ink_sec"]}">{escape(label)} ({item["pct"]}%)</text>'
+            f'  <rect x="{lx}" y="{ly - 8}" width="8" height="8" rx="1" fill="{color}"/>\n'
+            f'  <text x="{lx + 14}" y="{ly}" class="mono" font-size="11.5" fill="{t["ink_sec"]}">{escape(label)} ({item["pct"]}%)</text>'
         )
 
     parts = [
-        svg_header(w, h, "Live GitHub Telemetry HUD", t),
-        f'  <rect width="{w}" height="{h}" rx="16" fill="{t["canvas"]}" stroke="{t["line"]}" stroke-width="1.2"/>',
-        f'  <text x="42" y="36" class="mono" font-size="11" fill="{t["ink_muted"]}" letter-spacing="1.6">SPEC 02 // LIVE REPOSITORY TELEMETRY (AUTO-SYNCED)</text>',
-        f'  <text x="858" y="36" text-anchor="end" class="mono" font-size="10.5" fill="{t["ink_muted"]}">SYNC: {escape(m["updated_wib"])}</text>',
-        # Column 1: Language distribution
-        f'  <text x="42" y="74" class="sans" font-size="15" font-weight="700" fill="{t["ink"]}">Primary Stack Footprint</text>',
-        f'  <clipPath id="bar-clip"><rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="6"/></clipPath>',
+        svg_open(w, h, "Live GitHub repository ledger", t),
+        f'  <rect width="{w}" height="{h}" rx="4" fill="{t["canvas"]}" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="48" y="42" class="serif" font-size="22" font-weight="500" fill="{t["ink"]}">Repository ledger</text>',
+        f'  <text x="852" y="42" text-anchor="end" class="mono" font-size="11" fill="{t["ink_muted"]}">Synced {escape(m["updated_wib"])}</text>',
+        f'  <line x1="48" y1="58" x2="852" y2="58" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Left: Language share
+        f'  <text x="48" y="79" class="sans" font-size="13" font-weight="500" fill="{t["ink_sec"]}">Languages across non-fork repositories</text>',
+        f'  <clipPath id="bar-clip"><rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" rx="2"/></clipPath>',
         '  <g clip-path="url(#bar-clip)">',
         *bar_segments,
         "  </g>",
         *legend_items,
-        # Divider
-        f'  <line x1="420" y1="56" x2="420" y2="184" stroke="{t["line"]}" stroke-width="1"/>',
-        # Column 2: Snapshot counters
-        f'  <rect x="444" y="60" width="184" height="58" rx="10" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="460" y="81" class="mono" font-size="10.5" fill="{t["ink_muted"]}">PUBLIC REPOS</text>',
-        f'  <text x="460" y="106" class="mono" font-size="22" font-weight="700" fill="{t["ink"]}">{m["public_repos"]}</text>',
-        f'  <rect x="444" y="128" width="184" height="58" rx="10" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <text x="460" y="149" class="mono" font-size="10.5" fill="{t["ink_muted"]}">STARS · FOLLOWERS</text>',
-        f'  <text x="460" y="174" class="mono" font-size="18" font-weight="700" fill="{t["earth"]}">{m["total_stars"]} stars · {m["followers"]}</text>',
-        # Column 3: Latest Shipped Signal
-        f'  <rect x="646" y="60" width="212" height="126" rx="10" fill="{t["card"]}" stroke="{t["line"]}"/>',
-        f'  <circle cx="664" cy="82" r="4" fill="{t["sage"]}" class="pulse"/>',
-        f'  <text x="676" y="86" class="mono" font-size="10.5" fill="{t["sage"]}">LATEST SIGNAL</text>',
-        f'  <text x="662" y="118" class="mono" font-size="13.5" font-weight="700" fill="{t["ink"]}">{escape(m["latest_repo"][:22])}</text>',
-        f'  <text x="662" y="142" class="mono" font-size="11.5" fill="{t["ink_sec"]}">event // {escape(m["latest_action"])}</text>',
-        f'  <text x="662" y="166" class="mono" font-size="11" fill="{t["ink_muted"]}">date  // {escape(m["last_push"])}</text>',
+        # Tabular vertical hairlines (no nested cards)
+        f'  <line x1="444" y1="74" x2="444" y2="168" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="466" y="88" class="sans" font-size="12.5" fill="{t["ink_muted"]}">Public repositories</text>',
+        f'  <text x="466" y="122" class="serif" font-size="32" font-weight="500" fill="{t["ink"]}">{m["public_repos"]}</text>',
+        f'  <text x="466" y="152" class="sans" font-size="12" fill="{t["ink_muted"]}">{m["total_stars"]} stars, {m["followers"]} followers</text>',
+        f'  <line x1="620" y1="74" x2="620" y2="168" stroke="{t["rule"]}" stroke-width="1"/>',
+        f'  <text x="642" y="88" class="sans" font-size="12.5" fill="{t["ink_muted"]}">Latest repository activity</text>',
+        f'  <text x="642" y="120" class="mono" font-size="15.5" font-weight="600" fill="{t["earth"]}">{escape(m["latest_repo"][:22])}</text>',
+        f'  <text x="642" y="144" class="sans" font-size="12.5" fill="{t["ink_sec"]}">{escape(m["latest_action"])} on {escape(m["last_push"])}</text>',
+        f'  <text x="642" y="164" class="sans" font-size="11.5" fill="{t["ink_muted"]}">Updated daily via GitHub Actions</text>',
+        "</svg>",
+    ]
+    return "\n".join(parts)
+
+
+def render_closing(t: dict[str, str]) -> str:
+    w, h = 900, 144
+    brush = generate_brush_ribbons("closing", 48.0, 74.0, 804.0)
+    parts = [
+        svg_open(w, h, "Room to think. Work you can check. — naobi.dev", t),
+        f'  <rect width="{w}" height="{h}" rx="4" fill="{t["canvas"]}" stroke="{t["rule"]}" stroke-width="1"/>',
+        # Soft translucent brush wash (matching naobi.dev home-close)
+        f'  <g fill="{t["ink"]}" opacity="0.14">',
+        f'    {brush}',
+        f'  </g>',
+        f'  <text x="822" y="126" text-anchor="end" class="kanji" font-size="118" fill="{t["ink"]}" opacity="0.04">毘</text>',
+        f'  <text x="450" y="64" text-anchor="middle" class="serif" font-size="28" font-weight="500" fill="{t["ink"]}" letter-spacing="-0.4">Room to think.</text>',
+        f'  <text x="450" y="98" text-anchor="middle" class="serif" font-size="28" font-weight="500" fill="{t["ink"]}" letter-spacing="-0.4">Work you can check.</text>',
+        f'  <text x="450" y="124" text-anchor="middle" class="mono" font-size="11.5" fill="{t["earth"]}">naobi.dev</text>',
+        render_hanko_seal(840, 26, t, scale=0.85),
         "</svg>",
     ]
     return "\n".join(parts)
@@ -347,11 +384,12 @@ def main() -> None:
     metrics = collect_github_metrics()
 
     for theme_name, palette in THEMES.items():
-        (ASSETS_DIR / f"hero-{theme_name}.svg").write_text(render_hero(palette, metrics), encoding="utf-8")
-        (ASSETS_DIR / f"blueprint-{theme_name}.svg").write_text(render_blueprint(palette), encoding="utf-8")
-        (ASSETS_DIR / f"telemetry-{theme_name}.svg").write_text(render_telemetry(palette, metrics), encoding="utf-8")
+        (ASSETS_DIR / f"hero-{theme_name}.svg").write_text(render_hero(palette), encoding="utf-8")
+        (ASSETS_DIR / f"folio-{theme_name}.svg").write_text(render_folio(palette), encoding="utf-8")
+        (ASSETS_DIR / f"ledger-{theme_name}.svg").write_text(render_ledger(palette, metrics), encoding="utf-8")
+        (ASSETS_DIR / f"closing-{theme_name}.svg").write_text(render_closing(palette), encoding="utf-8")
 
-    print(f"Rendered 6 SVGs into {ASSETS_DIR} (repos={metrics['public_repos']}, latest={metrics['latest_repo']})")
+    print(f"Rendered 8 NAOBI folio SVGs into {ASSETS_DIR} (repos={metrics['public_repos']}, latest={metrics['latest_repo']})")
 
 
 if __name__ == "__main__":
