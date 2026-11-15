@@ -3,23 +3,32 @@
 ___
 
 
-# 👋 Hey there, I'm Raihan! 🧠
-<img align="right" width="350" src="banner.gif" alt="Coding setup">
+# Raihan
 
-Industrial engineer by background, builder and data tinkerer by habit. By day I model CAPEX and cost risk for mining and industrial projects; outside of work I build AI tools and operational software at <a href="https://naobi.dev">naobi.dev</a> and lead predictive maintenance research on the side. <br>
+Industrial engineer and project estimator with an interest in software engineering, artificial intelligence, and data-driven systems.
 
-<br>
-Mostly hacking in <b>Python</b> 🐍 and <b>TypeScript</b> — turning messy engineering spreadsheets, sensor logs, and workflows into tools that actually ship.
-<br><br><br><br>
+I work in mining and industrial consulting, focusing on CAPEX estimation, cost engineering, and technical project evaluation. Alongside my professional work, I build software and AI-powered tools through [Naobi](https://naobi.dev), exploring practical ways to improve research, engineering workflows, and everyday operations.
 
-## 💡 What I'm Usually Tinkering With
+My work sits at the intersection of engineering, software, and applied research. I enjoy turning complex problems, fragmented data, and repetitive processes into systems that are useful, transparent, and maintainable.
 
-- **AI Agents & Workflow Automation:** Orchestrating multi-agent setups to automate repetitive engineering checks and data prep.
-- **Predictive Maintenance & Reliability:** Modeling equipment degradation and time-to-failure from real fleet and sensor data.
-- **Practical Systems:** Shipping internal ERPs, cost systems, and APIs with Django, FastAPI, PostgreSQL, and Docker.
+## Areas of Interest
 
-## 🌱 Currently Exploring
+- **Engineering and Cost Estimation:** CAPEX development, cost modeling, material take-offs, and project evaluation.
+- **Artificial Intelligence:** AI agents, applied machine learning, and intelligent workflow automation.
+- **Software Development:** Building practical applications, APIs, and internal systems.
+- **Data and Research:** Predictive maintenance, equipment reliability, and data-driven decision-making.
+- **Infrastructure:** Self-hosted services, automation, and reliable system architecture.
 
-- **Probabilistic & Bayesian ML:** Models that quantify uncertainty instead of just guessing a single number.
-- **Modern Data Pipelines:** Experimenting with bronze–silver–gold architectures and Apache Iceberg on self-hosted infra.
-- **AI-Assisted Cost Engineering:** Making technical estimating faster while keeping every calculation inspectable.
+## Technologies
+
+I primarily work with Python and TypeScript, alongside tools and frameworks such as Django, FastAPI, PostgreSQL, and Docker.
+
+I am particularly interested in building systems that connect engineering knowledge with modern software capabilities.
+
+## Current Focus
+
+Exploring AI-assisted engineering workflows, predictive maintenance, probabilistic modeling, and modern data infrastructure.
+
+---
+
+I believe good engineering is not only about getting the numbers right, but also about building systems that make the process more reliable, understandable, and repeatable.
